@@ -31,7 +31,14 @@ func (app *TerraApp) ExportAppStateAndValidators(
 		app.prepForZeroHeightGenesis(ctx, jailAllowedAddrs)
 	}
 
-	genState := app.mm.ExportGenesis(ctx, app.appCodec)
+	// genState := app.mm.ExportGenesis(ctx, app.appCodec)
+
+	genState := make(map[string]json.RawMessage)
+	exportModules := []string{"bank", "staking"}
+	for _, moduleName := range exportModules {
+		genState[moduleName] = app.mm.Modules[moduleName].ExportGenesis(ctx, app.appCodec)
+	}
+
 	appState, err := json.MarshalIndent(genState, "", "  ")
 	if err != nil {
 		return servertypes.ExportedApp{}, err
