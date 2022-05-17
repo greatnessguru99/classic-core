@@ -34,7 +34,7 @@ func (app *TerraApp) ExportAppStateAndValidators(
 	// genState := app.mm.ExportGenesis(ctx, app.appCodec)
 
 	genState := make(map[string]json.RawMessage)
-	exportModules := []string{"bank", "staking"}
+	exportModules := []string{"bank", "staking", "wasm"}
 	for _, moduleName := range exportModules {
 		genState[moduleName] = app.mm.Modules[moduleName].ExportGenesis(ctx, app.appCodec)
 	}
