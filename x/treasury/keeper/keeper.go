@@ -75,6 +75,27 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
+// GetBurnTaxRate gets the burn tax rate
+func (k Keeper) GetBurnTaxRate(ctx sdk.Context) sdk.Dec {
+	store := ctx.KVStore(k.storeKey)
+	b := store.Get(types.BurnTaxRateKey)
+	if b == nil {
+		return types.DefaultBurnTaxRate
+	}
+
+	dp := sdk.DecProto{}
+	k.cdc.MustUnmarshal(b, &dp)
+	return dp.Dec
+}
+
+// SetBurnTaxRate sets the burn tax rate
+func (k Keeper) SetBurnTaxRate(ctx sdk.Context, burnTaxRate sdk.Dec) {
+	store := ctx.KVStore(k.storeKey)
+	b := k.cdc.MustMarshal(&sdk.DecProto{Dec: burnTaxRate})
+	store.Set(types.BurnTaxRateKey, b)
+}
+
+//TODO: Add logic to include burn tax as part of overall tax rate calcuation
 // GetTaxRate loads the tax rate
 func (k Keeper) GetTaxRate(ctx sdk.Context) sdk.Dec {
 	store := ctx.KVStore(k.storeKey)
@@ -85,7 +106,11 @@ func (k Keeper) GetTaxRate(ctx sdk.Context) sdk.Dec {
 
 	dp := sdk.DecProto{}
 	k.cdc.MustUnmarshal(b, &dp)
-	return dp.Dec
+
+	//Fetch burn tax rate and add to final product
+	burnTax := k.GetBurnTaxRate(ctx)
+
+	return dp.Dec.Add(burnTax)
 }
 
 // SetTaxRate sets the tax rate
@@ -105,7 +130,13 @@ func (k Keeper) GetRewardWeight(ctx sdk.Context) sdk.Dec {
 
 	dp := sdk.DecProto{}
 	k.cdc.MustUnmarshal(b, &dp)
-	return dp.Dec
+
+	//TODO: Figure out how much to modify calculatedRewardHeight relative to taxes
+	//burnTax := k.GetBurnTaxRate(ctx)
+	//realTax := k.GetTaxRate(ctx).Sub(burnTax)
+	calculatedRewardHeight := dp.Dec
+
+	return calculatedRewardHeight
 }
 
 // SetRewardWeight sets the reward weight

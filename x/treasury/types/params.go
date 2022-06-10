@@ -42,6 +42,7 @@ var (
 	DefaultWindowLong              = uint64(52)                 // a year
 	DefaultWindowProbation         = uint64(12)                 // 3 month
 	DefaultTaxRate                 = sdk.NewDecWithPrec(1, 3)   // 0.1%
+	DefaultBurnTaxRate             = sdk.ZeroDec()              // 0%
 	DefaultRewardWeight            = sdk.NewDecWithPrec(5, 2)   // 5%
 )
 
