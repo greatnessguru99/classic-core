@@ -95,7 +95,6 @@ func (k Keeper) SetBurnTaxRate(ctx sdk.Context, burnTaxRate sdk.Dec) {
 	store.Set(types.BurnTaxRateKey, b)
 }
 
-//TODO: Add logic to include burn tax as part of overall tax rate calcuation
 // GetTaxRate loads the tax rate
 func (k Keeper) GetTaxRate(ctx sdk.Context) sdk.Dec {
 	store := ctx.KVStore(k.storeKey)
