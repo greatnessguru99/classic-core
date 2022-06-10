@@ -130,10 +130,8 @@ func (k Keeper) GetRewardWeight(ctx sdk.Context) sdk.Dec {
 	dp := sdk.DecProto{}
 	k.cdc.MustUnmarshal(b, &dp)
 
-	//TODO: Figure out how much to modify calculatedRewardHeight relative to taxes
-	//burnTax := k.GetBurnTaxRate(ctx)
-	//realTax := k.GetTaxRate(ctx).Sub(burnTax)
-	calculatedRewardHeight := dp.Dec
+	burnTax := k.GetBurnTaxRate(ctx)
+	calculatedRewardHeight := dp.Dec.Add(burnTax)
 
 	return calculatedRewardHeight
 }
